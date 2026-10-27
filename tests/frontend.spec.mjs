@@ -102,11 +102,17 @@ test('Backpack connects and signs; only the two approved wallets are shown',asyn
 })
 
 
-test('unannounced CA stays TBA without token links or a copy button',async({page})=>{
+
+test('official token address, copy button and links use the new CA',async({page,context})=>{
+ await context.grantPermissions(['clipboard-read','clipboard-write'])
  await page.goto('/xx/')
- await expect(page.locator('.official-ca strong')).toHaveText('TBA')
- await expect(page.getByRole('button',{name:'Copy address',exact:true})).toHaveCount(0)
- await expect(page.locator('a[href*="pump.fun/coin/"],a[href*="solscan.io/token/"]')).toHaveCount(0)
- await expect(page.locator('.launch-hero')).toContainText('CA: TBA')
+ const ca='CqTFhniory2YcmQE6XwX23yjYXaXYRXE6tULHaEVpump'
+ await expect(page.locator('.official-ca strong')).toHaveText(ca)
+ await expect(page.locator('.official-links').getByRole('link',{name:/Pump.fun/})).toHaveAttribute('href','https://pump.fun/coin/'+ca)
+ await expect(page.locator('.official-links').getByRole('link',{name:/Solscan/})).toHaveAttribute('href','https://solscan.io/token/'+ca)
+ await page.getByRole('button',{name:'Copy address',exact:true}).click()
+ await expect(page.locator('.official-section')).toContainText('CA copied.')
+ expect(await page.evaluate(()=>navigator.clipboard.readText())).toBe(ca)
+ await expect(page.locator('.launch-hero')).not.toContainText('TBA')
  await expect(page.locator('body')).not.toContainText('DmsbYxTywtgnGfSFB84WHsgSjzeP86RJXe8Cm8Gdpump')
 })
