@@ -6,7 +6,9 @@ import './product.css'
 import './polish.css'
 import './triple.css'
 import './zunon-theme.css'
+import './product-enhancements.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode><App /></React.StrictMode>,
 )
+

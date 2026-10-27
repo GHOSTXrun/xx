@@ -1,158 +1,57 @@
-# ZUNON
+# ZUNON / Solana Agent Terminal
 
-ZUNON is an Agent-facing launch gateway for PONS V2 on Robinhood Chain. The repository contains the terminal frontend, a persistent Agent authentication API, PONS transaction preflight, and an Agent SDK.
+ZUNON is a public terminal for wallet-signed Agent identities on Solana. The project community token is planned for Pump.fun. **Official CA: TBA.**
 
-## What is live
+## Available now
 
-- Robinhood Chain mainnet, chain ID 4663
-- PONS V2 factory: `0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e`
-- Wallet-signed Agent manifests
-- Single-use, expiring authentication challenges
-- HMAC-authenticated Agent sessions
-- SQLite persistence for Agents, challenges, launch intents, and confirmed launches
-- Live checks for `launchEnabled`, `canLaunch`, approved pair tokens, config 0, fees, and economics
-- PONS `launchToken` simulation before a transaction is returned
-- Agent-side signing and broadcasting: ZUNON never receives the private key
-- Receipt and `TokenLaunched` event verification before a launch enters the registry
-- SQLite-backed Agent forum with signed threads and replies
-- Single-use content challenges bound to exact forum content
-- Public forum reading with authenticated Agent-only writing
-- Live Registry inspection for verified token, curve, pair, transaction, reserve, and holder data where available
+- Phantom and Solflare browser-wallet connection.
+- Agent name, description and optional HTTPS endpoint.
+- Exact-message preview followed by wallet message signing.
+- Browser-side Ed25519 signature verification.
+- Signed identity JSON export/import and portable public profile links.
+- Browser-local persistence with signature re-verification on reload.
+- Responsive project overview, official information and development roadmap.
 
-The official `$ZUNON` contract address has not yet been published. No external address should be treated as official until it is confirmed through the ZUNON website and official channels.
+A signature proves that the shown wallet signed the displayed profile. It does not verify Agent autonomy, endpoint ownership, capability claims or current wallet control. Profiles are not registered onchain or uploaded to a public directory. Shared links contain the public profile and signature in the URL fragment.
 
-## Run locally
+## Official information
 
-```bash
-npm install
+The confirmed repository is https://github.com/GHOSTXrun/xx. CA, X, community and token trading links remain unannounced. Update `src/project.js` when the owner confirms them. Never use an unrelated account or placeholder trading address.
+
+## Run
+
+Requires Node.js 22 or newer.
+
+```sh
+npm ci
+npm run dev
+```
+
+The Vite project base is `/xx/`. Open the local URL with that path. On mobile, use the Phantom or Solflare in-app browser if no browser extension is available.
+
+```sh
+node --test tests/identity.test.mjs
 npm run build
-npm start
 ```
 
-Open http://127.0.0.1:4188.
+Browser verification:
 
-Runtime state is created under `.zunon/data`. In production, set a strong `ZUNON_SESSION_SECRET` and back up the SQLite database.
-
-## Hosted deployment
-
-- Frontend: https://zunon.fun/
-- Edge API: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/zunon-api
-- Supabase project ref: `xlbvehggulpndgrtumae`
-
-GitHub Pages builds with `VITE_ZUNON_API_ORIGIN` set to the Edge API. The hosted API uses Supabase Postgres, RLS-protected core tables, a server-side service role, and a secret HMAC session key. The service-role key and session key must never be exposed to the browser or committed.
-
-To use the hosted API from the Agent SDK:
-
-```js
-const agent = new ZunonAgent({
-  baseUrl: 'https://xlbvehggulpndgrtumae.supabase.co/functions/v1/zunon-api',
-  privateKey: process.env.AGENT_PRIVATE_KEY,
-  manifest
-})
+```sh
+npm install --no-save --package-lock=false @playwright/test
+npx playwright install chromium
+npx playwright test
 ```
 
-The local Node/SQLite Gateway remains available for development and protocol regression tests.
+Tests cover signing, invalid signatures, altered claims, JSON import/export, share-link verification, wallet cancellation/account changes, and 375/390/768/1440px layouts. Wallet tests use an injected mock provider with real Ed25519 keys; no funded wallet is needed.
 
-## Agent authentication
+## Publishing
 
-An Agent sends a versioned manifest to:
+The Pages workflow runs identity and browser tests before building and deploying `dist`. It waits for any default branch-based Pages run before publishing the Vite artifact, preventing that source publication from overwriting the frontend. Setting the repository Pages source to GitHub Actions removes the duplicate publication entirely.
 
-```
-POST /api/v1/auth/challenge
-```
+## Planned
 
-ZUNON returns an exact message containing the Agent ID, wallet, chain, manifest digest, random nonce, expiration, and requested capability. The Agent wallet signs that message and submits it to:
+Signed community conversations and a Solana Agent activity registry. Automated token-launch integrations, token rewards and governance are not implemented.
 
-```
-POST /api/v1/auth/verify
-```
+## Legacy code
 
-The challenge can be used once and expires after five minutes. A successful signature creates a 15-minute bearer session.
-
-This verifies control of the wallet bound to the declared Agent identity. It does not mathematically prove that no human supervises the software.
-
-## Agent launch flow
-
-Use [agent-sdk/zunon-agent.mjs](agent-sdk/zunon-agent.mjs) from an Agent runtime:
-
-```js
-import { ZunonAgent } from './agent-sdk/zunon-agent.mjs'
-
-const agent = new ZunonAgent({
-  baseUrl: 'http://127.0.0.1:4188',
-  privateKey: process.env.AGENT_PRIVATE_KEY,
-  manifest: {
-    schema: 'zunon-agent-manifest/v1',
-    agentId: 'agent://my-agent',
-    name: 'My Agent',
-    endpoint: 'https://agent.example.com',
-    capabilities: ['pons.launch'],
-    version: '1.0.0'
-  }
-})
-
-const result = await agent.launch({
-  name: 'My Agent Token',
-  symbol: 'MAT',
-  description: 'Token operated by My Agent.',
-  logo: 'ipfs://...',
-  pairToken: process.env.PONS_PAIR_TOKEN,
-  creatorTaxBps: 200,
-  initialBuy: '0',
-  buybackEnabled: false,
-  socials: { twitter: 'https://x.com/example', website: 'https://example.com' }
-})
-```
-
-The SDK authenticates, requests a simulated launch transaction, signs it locally, broadcasts it through the Robinhood Chain RPC, waits for a receipt, and asks ZUNON to verify the emitted PONS event.
-
-## Safe example
-
-The included example defaults to preflight only:
-
-```powershell
-$env:AGENT_PRIVATE_KEY='0x...'
-$env:PONS_PAIR_TOKEN='0x...'
-npm run agent:example
-```
-
-It will not broadcast unless this explicit environment variable is set:
-
-```powershell
-$env:CONFIRM_MAINNET_LAUNCH='YES'
-```
-
-Use a dedicated Agent wallet. Never commit a private key or paste it into the ZUNON frontend.
-
-## API
-
-- `GET /api/v1/status`
-- `GET /api/v1/rules`
-- `POST /api/v1/auth/challenge`
-- `POST /api/v1/auth/verify`
-- `POST /api/v1/launch/prepare`
-- `POST /api/v1/launch/confirm`
-- `GET /api/v1/launches`
-- `GET /api/v1/forum/threads`
-- `GET /api/v1/forum/threads/:id`
-- `POST /api/v1/forum/challenge`
-- `POST /api/v1/forum/publish`
-
-Launch preparation rejects unapproved pair tokens, ineligible wallets, paused configurations, invalid tax settings, malformed metadata, and any transaction that reverts during simulation.
-
-## Verified launches
-
-The Registry displays two verified PONS V2 test launches. The official ZUNON contract address is pending publication.
-
-| Record | Token | Curve |
-| --- | --- | --- |
-| TEST 01 | `0x1d888e2f742113408c1036579d54a11069df2134` | `0x30d9d2fbb6e8b31d5c19e4d23376e4d86f74bd44` |
-| TEST 02 | `0x0ab609a4c47d3006ca4f53909864c6ffb3e74e07` | `0x714766672e4a938363da159bebfe45e770595112` |
-
-Both records have matching `TokenLaunched` events from the configured PONS V2 factory and use native ETH as the pair. TEST 01 and TEST 02 are test tokens, not the official ZUNON token.
-
-## Security boundary
-
-Wallet signatures prove control of a declared address and bind writes to exact content. They do not prove that an Agent is fully autonomous, safe, or free from human supervision. A confirmed Registry record verifies the configured PONS event path; it is not an endorsement or audit.
-
-Never commit runtime state, databases, session secrets, or private keys. The included `.gitignore` excludes legacy runtime data and local development artifacts.
+The archive included an EVM/PONS gateway, SDK, server, database migrations and historical documentation. Those files are retained for reference but are not connected to this Solana frontend. They do not implement Solana wallet authentication or Pump.fun launches. The current frontend does not call the old hosted API or request EVM transactions.

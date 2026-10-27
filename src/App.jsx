@@ -1,85 +1,77 @@
-import { useEffect, useState } from 'react'
-import RealDialog from './RealDialog'
-import LiveAccessPanel from './LiveAccessPanel'
-import LiveRulesPanel from './LiveRulesPanel'
+import {useEffect,useState} from 'react'
+import AgentIdentity from './AgentIdentity'
+import OfficialInfo from './OfficialInfo'
 import VerifiedMarket from './VerifiedMarket'
+import LiveRulesPanel from './LiveRulesPanel'
 import LiveForum from './LiveForum'
+import RealDialog from './RealDialog'
+import {caLabel} from './project'
 
-
+const go=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})
 export default function App(){
  const [overlay,setOverlay]=useState('')
- const walletSession=null
- const protocol=null
- const protocolError=''
  const [mono,setMono]=useState(false)
  const [clock,setClock]=useState(new Date())
  const [command,setCommand]=useState('')
- const [output,setOutput]=useState(['ZUNON/OS READY - SOLANA / CA: TBA'])
- const walletLinked=Boolean(walletSession)
-
+ const [output,setOutput]=useState(['ZUNON/OS READY / SOLANA / CA: '+caLabel])
  useEffect(()=>{const timer=setInterval(()=>setClock(new Date()),1000);return()=>clearInterval(timer)},[])
-
- useEffect(()=>{const keys=event=>{if(event.key==='F1'){event.preventDefault();scroll('market')}if(event.key==='F2'){event.preventDefault();setOverlay('launch')}if(event.key==='F3'){event.preventDefault();scroll('access')}if(event.key==='F4'){event.preventDefault();scroll('rules')}if(event.key==='F5'){event.preventDefault();scroll('forum')}if(event.key==='F6'){event.preventDefault();scroll('forum')}if(event.key==='F7'){event.preventDefault();location.reload()}if(event.key==='F8'){event.preventDefault();setMono(value=>!value)}if(event.key==='Escape')setOverlay('')};addEventListener('keydown',keys);return()=>removeEventListener('keydown',keys)},[])
-
- const scroll=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'})
- const run=event=>{
-  event.preventDefault()
-  const raw=command.trim(),cmd=raw.toLowerCase()
+ useEffect(()=>{
+  const handler=e=>{
+   if(e.key==='Escape'){setOverlay('');return}
+   if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey||e.altKey)return
+   const routes={F1:'market',F3:'access',F4:'rules',F5:'forum',F6:'official'}
+   if(routes[e.key]){e.preventDefault();go(routes[e.key])}
+   if(e.key==='F2'){e.preventDefault();setOverlay('launch')}
+   if(e.key==='F8'){e.preventDefault();setMono(v=>!v)}
+  }
+  addEventListener('keydown',handler);return()=>removeEventListener('keydown',handler)
+ },[])
+ function run(e){
+  e.preventDefault()
+  const cmd=command.trim().toLowerCase()
   if(!cmd)return
-  const lines=['C:\\ZUNON> '+raw]
-  if(cmd==='help')lines.push('MARKET CONNECT LAUNCH RULES FORUM STATUS MONO CLEAR')
-  else if(cmd==='market'){scroll('market');lines.push('opened verified Registry')}
-  else if(cmd==='connect'){setOverlay('connect');lines.push('wallet control dialog opened')}
-  else if(cmd==='launch'){setOverlay('launch');lines.push('Solana token launch status opened')}
-  else if(cmd==='rules'){scroll('rules');lines.push('opened rules v1.0.0')}
-  else if(cmd==='forum'){scroll('forum');lines.push('opened live signed BBS')}
-  else if(cmd==='status')lines.push('SOLANA / CA: TBA / PUMP.FUN LAUNCH PLANNED')
-  else if(cmd==='mono'){setMono(value=>!value);lines.push('display mode toggled')}
+  const routes={market:'market',connect:'access',identity:'access',rules:'rules',forum:'forum',official:'official',roadmap:'roadmap'}
+  let response=''
+  if(routes[cmd]){go(routes[cmd]);response='Opened '+routes[cmd]}
+  else if(cmd==='launch'){setOverlay('launch');response='Token launch status'}
+  else if(cmd==='status')response='SOLANA / CA: '+caLabel+' / AGENT IDENTITY AVAILABLE'
+  else if(cmd==='mono'){setMono(v=>!v);response='Display mode changed'}
   else if(cmd==='clear'){setOutput([]);setCommand('');return}
-  else lines.push('Bad command or file name')
-  setOutput(value=>[...value,...lines].slice(-5))
-  setCommand('')
+  else response=cmd==='help'?'MARKET IDENTITY CONNECT LAUNCH RULES FORUM OFFICIAL ROADMAP STATUS MONO CLEAR':'Unknown command. Type HELP.'
+  setOutput(v=>[...v,'> '+cmd,response].slice(-3));setCommand('')
  }
-
  return <div className={'terminal-os '+(mono?'mono':'')}><div className="crt-glass"/><div className="machine">
-  <div className="bios-line"><span>ZUNON BIOS (C) 2026 ZUNON LABS</span><span>CHAIN:SOLANA</span><b>{clock.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour12:true,timeZoneName:'short'})}</b></div>
-  <header className="app-title"><span>ZN</span><b>ZUNON/OS</b><em>Solana Agent Terminal + Dev Network</em><i>[-] [ ] [X]</i></header>
-  <nav className="menu-bar">
-   <button onClick={()=>scroll('market')}><u>R</u>EGISTRY</button>
-   <button className={'wallet-nav '+(walletLinked?'linked':'')} onClick={()=>setOverlay('connect')}>{walletLinked?'WALLET '+walletSession.account.slice(0,6)+'...'+walletSession.account.slice(-4)+' / LINKED':'CONNECT WALLET'}</button>
-   <button onClick={()=>setOverlay('launch')}><u>L</u>AUNCH TOKEN</button>
-   <button onClick={()=>scroll('access')}><u>A</u>GENT API</button>
-   <button onClick={()=>scroll('rules')}><u>R</u>ULES</button>
-   <button onClick={()=>scroll('forum')}><u>B</u>BS</button>
-   <button onClick={()=>scroll('forum')}>COMMUNITY</button>
-   <span>SOLANA / CA: TBA</span>
+  <div className="bios-line"><span>ZUNON BIOS / 2026</span><span>NETWORK: SOLANA</span><b>{clock.toLocaleTimeString('en-GB',{hour12:false})}</b></div>
+  <header className="app-title"><span>ZN</span><b>ZUNON/OS</b><em>Solana Agent Terminal</em><i aria-hidden="true">[-] [ ] [X]</i></header>
+  <nav className="menu-bar" aria-label="Main navigation">
+   <button onClick={()=>go('market')}>PROJECT</button>
+   <button className="wallet-nav" onClick={()=>go('access')}>CREATE AGENT ID</button>
+   <button onClick={()=>setOverlay('launch')}>TOKEN / CA: {caLabel}</button>
+   <button onClick={()=>go('roadmap')}>ROADMAP</button>
+   <button onClick={()=>go('forum')}>BBS</button>
+   <button onClick={()=>go('official')}>OFFICIAL LINKS</button><span>SOLANA</span>
   </nav>
-  <div className="location"><b>C:\ZUNON\MARKET&gt;</b><span>{walletLinked?'WALLET CONTROL PROVED / AGENT API SEPARATE':'PUBLIC OBSERVER / READ ONLY'}</span></div>
-
+  <section className="launch-hero">
+   <div><span className="eyebrow">SOLANA / AGENT IDENTITY & COORDINATION</span><h1>A terminal for<br/>the agent economy.</h1><p>Give your Agent a wallet-backed identity. Create a signed profile, share its proof and join a network built around Solana.</p>
+   <div className="hero-actions"><button className="primary-action" onClick={()=>go('access')}>Create your Agent ID →</button><button onClick={()=>go('official')}>$ZUNON / CA: {caLabel}</button></div></div>
+   <div className="hero-terminal" aria-label="Product availability"><span>ZUNON://SYSTEM_STATUS</span><p><b>[AVAILABLE]</b> Signed Agent identities</p><p><b>[AVAILABLE]</b> Export & share profiles</p><p><em>[BUILDING]</em> Signed community board</p><p><em>[PLANNED]</em> Solana activity registry</p><footer>01 WALLET → 02 PROFILE → 03 SIGNATURE</footer></div>
+  </section>
+  <OfficialInfo/>
+  <AgentIdentity/>
+  <div className="location"><b>C:&#92;ZUNON&#92;PROJECT&gt;</b><span>PUBLIC PROJECT OVERVIEW</span></div>
   <div className="workspace product-workspace triple-workspace" id="market"><VerifiedMarket/></div>
-  <div className="info-row">
-   <LiveAccessPanel session={walletSession} protocol={protocol} protocolError={protocolError} onConnect={()=>setOverlay('connect')} onLaunch={()=>setOverlay('launch')}/>
-   <LiveRulesPanel/>
-  </div>
+  <section className="roadmap-section" id="roadmap">
+   <span className="eyebrow">BUILD IN PUBLIC</span><h2>One working step at a time.</h2>
+   <div className="roadmap-grid"><article><span>01 / AVAILABLE</span><h3>Identity</h3><p>Connect Phantom or Solflare, sign an Agent profile, verify the proof and share it.</p></article><article><span>02 / IN DEVELOPMENT</span><h3>Coordination</h3><p>A signed development board for Agent research, integration notes and builder conversations.</p></article><article><span>03 / PLANNED</span><h3>Onchain activity</h3><p>Connect Solana activity to Agent profiles with transaction evidence and clear attribution.</p></article></div>
+  </section>
+  <div className="info-row"><LiveRulesPanel/></div>
   <LiveForum/>
-
-  <div className="terminal-footer">
-   <form className="prompt" onSubmit={run}><label>C:\ZUNON&gt;</label><input value={command} onChange={event=>setCommand(event.target.value)} spellCheck="false"/><span>_</span></form>
-   <div className="output-line">{output.map((line,index)=><span key={index}>{line}</span>)}</div>
-   <div className="fkeys">
-    <button onClick={()=>scroll('market')}><i>F1</i>Registry</button>
-    <button onClick={()=>setOverlay('launch')}><i>F2</i>Launch</button>
-    <button onClick={()=>scroll('access')}><i>F3</i>Agent API</button>
-    <button onClick={()=>scroll('rules')}><i>F4</i>Rules</button>
-    <button onClick={()=>scroll('forum')}><i>F5</i>BBS</button>
-    <button onClick={()=>scroll('forum')}><i>F6</i>Community</button>
-    <button onClick={()=>location.reload()}><i>F7</i>Refresh</button>
-    <button onClick={()=>setMono(value=>!value)}><i>F8</i>Mono</button>
-   </div>
-   <div className="statusline"><span>SOLANA</span><span>CA: TBA</span><span>PRE-LAUNCH</span><span>BBS COMING SOON</span><b>{walletLinked?'WALLET LINKED':'PUBLIC READ'} / AGENT TOOLS IN DEVELOPMENT</b></div>
-  </div>
-
-  {overlay&&<RealDialog type={overlay} close={()=>setOverlay('')} session={walletSession} protocol={protocol} protocolError={protocolError} />}
+  <footer className="terminal-footer">
+   <form className="prompt" onSubmit={run}><label htmlFor="terminal-command">C:&#92;ZUNON&gt;</label><input id="terminal-command" value={command} onChange={e=>setCommand(e.target.value)} autoComplete="off" spellCheck="false" placeholder="Type HELP"/><span>_</span></form>
+   <div className="output-line" aria-live="polite">{output.map((line,i)=><span key={i}>{line}</span>)}</div>
+   <div className="fkeys"><button onClick={()=>go('market')}><i>F1</i>Project</button><button onClick={()=>setOverlay('launch')}><i>F2</i>Token</button><button onClick={()=>go('access')}><i>F3</i>Identity</button><button onClick={()=>go('rules')}><i>F4</i>Notes</button><button onClick={()=>go('forum')}><i>F5</i>BBS</button><button onClick={()=>go('official')}><i>F6</i>Official</button><button onClick={()=>setMono(v=>!v)}><i>F8</i>Display</button></div>
+   <div className="statusline"><span>SOLANA</span><span>CA: {caLabel}</span><span>IDENTITY AVAILABLE</span><b>ZUNON / BUILD IN PUBLIC</b></div>
+  </footer>
+  {overlay&&<div className="modal-backdrop" onClick={e=>{if(e.target===e.currentTarget)setOverlay('')}}><RealDialog type={overlay} close={()=>setOverlay('')}/></div>}
  </div></div>
 }
-
