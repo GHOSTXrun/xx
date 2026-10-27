@@ -46,6 +46,11 @@ jobs:
           if-no-files-found: ignore
       - name: Build
         run: npm run build
+        env:
+          VITE_BASE_PATH: /
+      - name: Check custom-domain asset paths
+        run: |
+          node --input-type=module -e "import fs from 'node:fs'; const html = fs.readFileSync('dist/index.html', 'utf8'); if (!html.includes('src=\"/assets/') || html.includes('/xx/assets/')) throw new Error('Incorrect custom-domain asset base');"
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
