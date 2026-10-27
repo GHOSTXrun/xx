@@ -80,6 +80,6 @@ export async function readShare(hash){
  return parseRecord(new TextDecoder('utf-8',{fatal:true}).decode(fromBase64(raw+'='.repeat((4-raw.length%4)%4))))
 }
 export function availableWallets(scope=globalThis) {
- const choices=[{id:'phantom',name:'Phantom',provider:scope.phantom?.solana||(scope.solana?.isPhantom?scope.solana:null)},{id:'solflare',name:'Solflare',provider:scope.solflare}]
+ const choices=[{id:'phantom',name:'Phantom',provider:scope.phantom?.solana||(scope.solana?.isPhantom?scope.solana:null)},{id:'backpack',name:'Backpack',provider:scope.backpack?.solana||scope.backpack||(scope.solana?.isBackpack?scope.solana:null)}]
  return choices.filter(x=>typeof x.provider?.connect==='function'&&typeof x.provider?.signMessage==='function')
 }

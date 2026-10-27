@@ -4,7 +4,7 @@ ZUNON is a public terminal for wallet-signed Agent identities on Solana. The pro
 
 ## Available now
 
-- Phantom and Solflare browser-wallet connection.
+- Backpack and Phantom browser-wallet connection.
 - Agent name, description and optional HTTPS endpoint.
 - Exact-message preview followed by wallet message signing.
 - Browser-side Ed25519 signature verification.
@@ -16,7 +16,7 @@ A signature proves that the shown wallet signed the displayed profile. It does n
 
 ## Official information
 
-The confirmed repository is https://github.com/GHOSTXrun/xx. CA, X, community and token trading links remain unannounced. Update `src/project.js` when the owner confirms them. Never use an unrelated account or placeholder trading address.
+The confirmed repository is https://github.com/GHOSTXrun/xx. Official X: https://x.com/ZUNONsol. CA, community and token trading links remain unannounced. Update `src/project.js` when the owner confirms them. Never use an unrelated account or placeholder trading address.
 
 ## Run
 
@@ -27,7 +27,7 @@ npm ci
 npm run dev
 ```
 
-The Vite project base is `/xx/`. Open the local URL with that path. On mobile, use the Phantom or Solflare in-app browser if no browser extension is available.
+The Vite project base is `/xx/`. Open the local URL with that path. On mobile, use the Backpack or Phantom in-app browser if no browser extension is available.
 
 ```sh
 node --test tests/identity.test.mjs

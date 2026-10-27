@@ -4,7 +4,7 @@ export const project = Object.freeze({
  ticker: 'ZUNON',
  network: 'Solana',
  ca: null,
- x: null,
+ x: 'https://x.com/ZUNONsol',
  community: null,
  repository: 'https://github.com/GHOSTXrun/xx',
  trading: null,

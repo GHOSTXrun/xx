@@ -126,3 +126,11 @@ button.primary-action{background:#39ff68;color:#001605;font-weight:700}
  .hero-visual .hero-terminal{padding:16px}
 }
 @media(prefers-reduced-motion:reduce){.hero-logo{animation:none;opacity:1;filter:drop-shadow(0 0 12px #00ff522a);transform:none}}
+
+.wallet-picker{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.identity-section .wallet-choice{display:flex;align-items:center;gap:10px;text-align:left;padding:14px 12px;background:#0a0b10;border-color:#30343b;min-width:0}
+.wallet-choice svg{flex-shrink:0}.wallet-choice.backpack svg{color:#f44850}.wallet-choice.phantom svg{color:#b4a0ef}
+.wallet-choice span{font-size:12px;line-height:1.5}.wallet-choice small{display:block;text-align:left;color:#88a795;font-size:8px;margin-top:3px}
+.identity-section .wallet-choice.connected{border-color:#39ff68}
+.terminal-os .menu-bar a{color:#9affb6}
+@media(max-width:700px){.terminal-os .menu-bar a{justify-content:center;min-height:44px;height:auto;padding:10px 4px;border:1px solid #205832;font-size:9px;grid-column:1/-1}.wallet-picker{gap:8px}.identity-section .wallet-choice{padding:12px 8px;gap:7px}.wallet-choice span{font-size:11px}.wallet-choice small{font-size:7px}}

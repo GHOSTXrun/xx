@@ -45,6 +45,7 @@ test('validates addresses and profile limits, rejects executable URLs',()=>{
 })
 test('offers only supported injected wallets with message-signing support',()=>{
  const provider={connect(){},signMessage(){}}
- assert.deepEqual(availableWallets({phantom:{solana:provider},solflare:provider}).map(w=>w.id),['phantom','solflare'])
- assert.deepEqual(availableWallets({solana:{connect(){}}}),[])
+ assert.deepEqual(availableWallets({phantom:{solana:provider},backpack:provider,solflare:provider}).map(w=>w.id),['phantom','backpack'])
+ assert.deepEqual(availableWallets({solana:{connect(){}},solflare:provider}),[])
+ assert.equal(availableWallets({backpack:{solana:provider}})[0].id,'backpack')
 })

@@ -5,7 +5,7 @@ import VerifiedMarket from './VerifiedMarket'
 import LiveRulesPanel from './LiveRulesPanel'
 import LiveForum from './LiveForum'
 import RealDialog from './RealDialog'
-import {caLabel} from './project'
+import {caLabel,project} from './project'
 
 const go=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})
 export default function App(){
@@ -45,11 +45,11 @@ export default function App(){
   <header className="app-title"><span>ZN</span><b>ZUNON/OS</b><em>Solana Agent Terminal</em><i aria-hidden="true">[-] [ ] [X]</i></header>
   <nav className="menu-bar" aria-label="Main navigation">
    <button onClick={()=>go('market')}>PROJECT</button>
-   <button className="wallet-nav" onClick={()=>go('access')}>CREATE AGENT ID</button>
+   <button className="wallet-nav" onClick={()=>go('access')}>CONNECT WALLET</button>
    <button onClick={()=>setOverlay('launch')}>TOKEN / CA: {caLabel}</button>
    <button onClick={()=>go('roadmap')}>ROADMAP</button>
    <button onClick={()=>go('forum')}>BBS</button>
-   <button onClick={()=>go('official')}>OFFICIAL LINKS</button><span>SOLANA</span>
+   <button onClick={()=>go('official')}>OFFICIAL LINKS</button><a href={project.x} target="_blank" rel="noreferrer">X / @ZUNONsol ↗</a><span>SOLANA</span>
   </nav>
   <section className="launch-hero">
    <div><span className="eyebrow">SOLANA / AGENT IDENTITY & COORDINATION</span><h1>A terminal for<br/>the agent economy.</h1><p>Give your Agent a wallet-backed identity. Create a signed profile, share its proof and join a network built around Solana.</p>
@@ -62,7 +62,7 @@ export default function App(){
   <div className="workspace product-workspace triple-workspace" id="market"><VerifiedMarket/></div>
   <section className="roadmap-section" id="roadmap">
    <span className="eyebrow">BUILD IN PUBLIC</span><h2>One working step at a time.</h2>
-   <div className="roadmap-grid"><article><span>01 / AVAILABLE</span><h3>Identity</h3><p>Connect Phantom or Solflare, sign an Agent profile, verify the proof and share it.</p></article><article><span>02 / IN DEVELOPMENT</span><h3>Coordination</h3><p>A signed development board for Agent research, integration notes and builder conversations.</p></article><article><span>03 / PLANNED</span><h3>Onchain activity</h3><p>Connect Solana activity to Agent profiles with transaction evidence and clear attribution.</p></article></div>
+   <div className="roadmap-grid"><article><span>01 / AVAILABLE</span><h3>Identity</h3><p>Connect Backpack or Phantom, sign an Agent profile, verify the proof and share it.</p></article><article><span>02 / IN DEVELOPMENT</span><h3>Coordination</h3><p>A signed development board for Agent research, integration notes and builder conversations.</p></article><article><span>03 / PLANNED</span><h3>Onchain activity</h3><p>Connect Solana activity to Agent profiles with transaction evidence and clear attribution.</p></article></div>
   </section>
   <div className="info-row"><LiveRulesPanel/></div>
   <LiveForum/>

@@ -44,11 +44,12 @@ export default function AgentIdentity(){
   return()=>{active=false;epoch.current++;clearInterval(timer);removeEventListener('hashchange',onHash);cleanupRef.current()}
  },[])
 
- async function connect(){
+ async function connect(id){
+  setChoice(id)
   setBusy(true);setError('');setNotice('');setPreview(null);epoch.current++
   try{
-   const provider=wallets.find(w=>w.id===choice)?.provider
-   if(!provider)throw Error('Open this page in the Phantom or Solflare wallet browser, or install its browser extension. Then refresh wallet detection.')
+   const provider=availableWallets(window).find(w=>w.id===id)?.provider
+   if(!provider)throw Error('Open this page in the Phantom or Backpack wallet browser, or install its browser extension. Then refresh wallet detection.')
    await provider.connect()
    if(!provider.publicKey)throw Error('The wallet did not return an address.')
    cleanupRef.current()
@@ -129,9 +130,10 @@ export default function AgentIdentity(){
   <div className="identity-intro"><span className="eyebrow">01 / CREATE YOUR AGENT ID</span><h2>A wallet. An identity. A signed record.</h2><p>Connect a Solana wallet, describe your Agent and sign its public profile. Export the proof or share a link anyone can verify.</p></div>
   <div className="identity-grid">
    <form className="identity-form" onSubmit={prepare}>
-    <div className="wallet-controls"><label>WALLET<select disabled={busy||!!wallet} value={choice} onChange={e=>setChoice(e.target.value)}>{wallets.length?wallets.map(w=><option value={w.id} key={w.id}>{w.name}</option>):<option value="">No wallet detected</option>}</select></label><button type="button" disabled={busy} onClick={wallet?disconnect:connect}>{wallet?'Disconnect':'Connect wallet'}</button></div>
-    <p className="wallet-address">{wallet||'On mobile, open this site inside the Phantom or Solflare browser.'}</p>
-    {!wallets.length&&<div className="wallet-help"><button type="button" onClick={detect}>Detect wallets again</button><a href="https://phantom.com/download" target="_blank" rel="noreferrer">Get Phantom ↗</a><a href="https://solflare.com/download" target="_blank" rel="noreferrer">Get Solflare ↗</a></div>}
+    <div className="wallet-picker" aria-label="Supported Solana wallets">{['backpack','phantom'].map(id=><button key={id} type="button" className={'wallet-choice '+id+(wallet&&choice===id?' connected':'')} disabled={busy||!!wallet} onClick={()=>connect(id)}><WalletIcon kind={id}/><span>{id==='backpack'?'Connect Backpack':'Connect Phantom'}<small>{wallet&&choice===id?'CONNECTED':wallets.some(w=>w.id===id)?'DETECTED':'EXTENSION / IN-APP BROWSER'}</small></span></button>)}</div>
+    {wallet&&<button type="button" disabled={busy} onClick={disconnect}>Disconnect</button>}
+    <p className="wallet-address">{wallet||'Only Backpack and Phantom are supported. On mobile, open this site inside your wallet browser.'}</p>
+    {!wallets.length&&<div className="wallet-help"><button type="button" onClick={detect}>Detect wallets again</button><a href="https://backpack.app/download" target="_blank" rel="noreferrer">Get Backpack ↗</a><a href="https://phantom.com/download" target="_blank" rel="noreferrer">Get Phantom ↗</a></div>}
     <label>AGENT NAME<input required maxLength={48} value={form.name} disabled={busy} onChange={e=>edit('name',e.target.value)} placeholder="e.g. Atlas Research Agent"/></label>
     <label>WHAT DOES YOUR AGENT DO?<textarea maxLength={280} value={form.description} disabled={busy} onChange={e=>edit('description',e.target.value)} placeholder="Describe its role and capabilities."/><small>{form.description.length}/280</small></label>
     <label>AGENT URL / OPTIONAL<input type="url" maxLength={200} value={form.endpoint} disabled={busy} onChange={e=>edit('endpoint',e.target.value)} placeholder="https://your-agent.example"/></label>
@@ -155,4 +157,8 @@ export default function AgentIdentity(){
   </div>
   <div className="identity-feedback" aria-live="polite" role="status">{busy&&<p>Wallet operation or verification in progress…</p>}{notice&&<p>{notice}</p>}{error&&<p role="alert" className="identity-error">{error}</p>}</div>
  </section>
+}
+
+function WalletIcon({kind}){
+ return kind==='backpack'?<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2"/><rect x="5" y="7" width="14" height="15" rx="4" fill="currentColor"/><path d="M8 14h8M8 17h8M9 10h6" stroke="#170c0f" strokeWidth="1.5"/></svg>:<svg width="25" height="24" viewBox="0 0 25 24" aria-hidden="true"><path d="M4 20c-1.8 0-2.8-1.5-2-3.7C4.2 8.9 8.1 4 15 4c5 0 8 2.6 8 6.8 0 4.7-3.8 9.2-6.5 9.2-1.4 0-1.8-.8-1.6-2-1.1 1.4-2.3 2-3.5 2-1.3 0-1.7-.8-1.5-2-1.7 1.4-3.5 2-5.9 2Z" fill="currentColor"/><ellipse cx="14" cy="10.5" rx="1" ry="1.5" fill="#201b2c"/><ellipse cx="18" cy="10.5" rx="1" ry="1.5" fill="#201b2c"/></svg>
 }

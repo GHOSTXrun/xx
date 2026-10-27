@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test'
-async function mockWallet(page){
- await page.addInitScript(()=>{
+async function mockWallet(page,kind='phantom'){
+ await page.addInitScript((kind)=>{
   const listeners={}
   const alphabet='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
   let keys
@@ -24,11 +24,12 @@ async function mockWallet(page){
    on(event,cb){(listeners[event]??=[]).push(cb)},
    removeListener(event,cb){listeners[event]=(listeners[event]||[]).filter(x=>x!==cb)},
   }
-  window.phantom={solana:provider}
- })
+  if(kind==='backpack')window.backpack=provider
+  else window.phantom={solana:provider}
+ },kind)
 }
-async function fill(page){
- await page.getByRole('button',{name:'Connect wallet',exact:true}).click()
+async function fill(page,kind='Phantom'){
+ await page.getByRole('button',{name:new RegExp('Connect '+kind)}).click()
  await expect(page.getByRole('button',{name:'Disconnect',exact:true})).toBeVisible()
  await page.getByLabel('AGENT NAME',{exact:true}).fill('Atlas Research')
  await page.getByLabel('WHAT DOES YOUR AGENT DO?').fill('Researching the Solana agent economy.')
@@ -51,7 +52,7 @@ test('create, export, import, share and reverify a signed profile',async({page})
  const other=await page.context().browser().newContext({baseURL:'http://127.0.0.1:5173'})
  const reader=await other.newPage();await reader.goto('/xx/'+hash)
  await expect(reader.locator('.agent-card')).toContainText('Atlas Research')
- await expect(reader.getByRole('button',{name:'Connect wallet',exact:true})).toBeVisible()
+ await expect(reader.getByRole('button',{name:'Connect Phantom',exact:false})).toBeVisible()
  await other.close()
  await page.getByLabel('AGENT NAME',{exact:true}).fill('Changed draft')
  await expect(page.locator('.identity-warning')).toContainText('Draft changed')
@@ -89,3 +90,13 @@ for(const width of [375,390,768,1440]){
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
  })
 }
+
+test('Backpack connects and signs; only the two approved wallets are shown',async({page})=>{
+ await mockWallet(page,'backpack');await page.goto('/xx/')
+ await expect(page.getByRole('link',{name:/X \/ @ZUNONsol/})).toHaveAttribute('href','https://x.com/ZUNONsol')
+ await expect(page.locator('.wallet-choice')).toHaveCount(2)
+ await expect(page.locator('.wallet-picker')).not.toContainText('Solflare')
+ await fill(page,'Backpack')
+ await page.getByRole('button',{name:'Sign & verify identity'}).click()
+ await expect(page.locator('.agent-card')).toContainText('SIGNATURE VERIFIED')
+})
