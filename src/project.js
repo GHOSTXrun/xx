@@ -3,11 +3,11 @@ export const project = Object.freeze({
  name: 'ZUNON',
  ticker: 'ZUNON',
  network: 'Solana',
- ca: 'CqTFhniory2YcmQE6XwX23yjYXaXYRXE6tULHaEVpump',
+ ca: null,
  x: 'https://x.com/ZUNONsol',
  community: null,
  repository: 'https://github.com/GHOSTXrun/xx',
- trading: 'https://pump.fun/coin/CqTFhniory2YcmQE6XwX23yjYXaXYRXE6tULHaEVpump',
+ trading: null,
 })
 export const caLabel = project.ca || 'TBA'
 
