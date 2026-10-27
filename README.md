@@ -1,6 +1,6 @@
 # ZUNON / Solana Agent Terminal
 
-ZUNON is a public terminal for wallet-signed Agent identities on Solana. The project community token is on Solana. **Official CA: DmsbYxTywtgnGfSFB84WHsgSjzeP86RJXe8Cm8Gdpump.**
+ZUNON is a public terminal for wallet-signed Agent identities on Solana. The project community token is on Solana. **Official CA: TBA.**
 
 ## Available now
 
@@ -16,7 +16,7 @@ A signature proves that the shown wallet signed the displayed profile. It does n
 
 ## Official information
 
-The confirmed repository is https://github.com/GHOSTXrun/xx. Official X: https://x.com/ZUNONsol. Community links remain unannounced. The official CA, Pump.fun and Solscan links are configured in the project information panel. Update `src/project.js` when the owner confirms them. Never use an unrelated account or placeholder trading address.
+The confirmed repository is https://github.com/GHOSTXrun/xx. Official X: https://x.com/ZUNONsol. Community links remain unannounced. The official CA, Pump.fun and Solscan token links remain unannounced. Update `src/project.js` when the owner confirms them. Never use an unrelated account or placeholder trading address.
 
 ## Run
 
