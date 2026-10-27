@@ -54,7 +54,7 @@ export default function App(){
   <section className="launch-hero">
    <div><span className="eyebrow">SOLANA / AGENT IDENTITY & COORDINATION</span><h1>A terminal for<br/>the agent economy.</h1><p>Give your Agent a wallet-backed identity. Create a signed profile, share its proof and join a network built around Solana.</p>
    <div className="hero-actions"><button className="primary-action" onClick={()=>go('access')}>Create your Agent ID →</button><button onClick={()=>go('official')}>$ZUNON / CA: {caLabel}</button></div></div>
-   <div className="hero-terminal" aria-label="Product availability"><span>ZUNON://SYSTEM_STATUS</span><p><b>[AVAILABLE]</b> Signed Agent identities</p><p><b>[AVAILABLE]</b> Export & share profiles</p><p><em>[BUILDING]</em> Signed community board</p><p><em>[PLANNED]</em> Solana activity registry</p><footer>01 WALLET → 02 PROFILE → 03 SIGNATURE</footer></div>
+   <div className="hero-visual"><div className="hero-logo-stage"><div className="hero-logo-halo" aria-hidden="true"/><img className="hero-logo" src={import.meta.env.BASE_URL+'zunon-logo.png'} alt="ZUNON terminal logo" width="1280" height="1280" fetchPriority="high"/></div><div className="hero-terminal" aria-label="Product availability"><span>ZUNON://SYSTEM_STATUS</span><p><b>[AVAILABLE]</b> Signed Agent identities</p><p><b>[AVAILABLE]</b> Export & share profiles</p><p><em>[BUILDING]</em> Signed community board</p><p><em>[PLANNED]</em> Solana activity registry</p><footer>01 WALLET → 02 PROFILE → 03 SIGNATURE</footer></div></div>
   </section>
   <OfficialInfo/>
   <AgentIdentity/>
