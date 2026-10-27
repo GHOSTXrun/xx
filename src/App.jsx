@@ -5,7 +5,7 @@ import VerifiedMarket from './VerifiedMarket'
 import LiveRulesPanel from './LiveRulesPanel'
 import LiveForum from './LiveForum'
 import RealDialog from './RealDialog'
-import {caLabel,project} from './project'
+import {caLabel,caShort,project} from './project'
 
 const go=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})
 export default function App(){
@@ -46,14 +46,14 @@ export default function App(){
   <nav className="menu-bar" aria-label="Main navigation">
    <button onClick={()=>go('market')}>PROJECT</button>
    <button className="wallet-nav" onClick={()=>go('access')}>CONNECT WALLET</button>
-   <button onClick={()=>setOverlay('launch')}>TOKEN / CA: {caLabel}</button>
+   <button onClick={()=>setOverlay('launch')}>TOKEN / CA: {caShort}</button>
    <button onClick={()=>go('roadmap')}>ROADMAP</button>
    <button onClick={()=>go('forum')}>BBS</button>
    <button onClick={()=>go('official')}>OFFICIAL LINKS</button><a href={project.x} target="_blank" rel="noreferrer">X / @ZUNONsol ↗</a><span>SOLANA</span>
   </nav>
   <section className="launch-hero">
    <div><span className="eyebrow">SOLANA / AGENT IDENTITY & COORDINATION</span><h1>A terminal for<br/>the agent economy.</h1><p>Give your Agent a wallet-backed identity. Create a signed profile, share its proof and join a network built around Solana.</p>
-   <div className="hero-actions"><button className="primary-action" onClick={()=>go('access')}>Create your Agent ID →</button><button onClick={()=>go('official')}>$ZUNON / CA: {caLabel}</button></div></div>
+   <div className="hero-actions"><button className="primary-action" onClick={()=>go('access')}>Create your Agent ID →</button><button onClick={()=>go('official')}>$ZUNON / CA: {caShort}</button></div></div>
    <div className="hero-visual"><div className="hero-logo-stage"><div className="hero-logo-halo" aria-hidden="true"/><img className="hero-logo" src={import.meta.env.BASE_URL+'zunon-logo.png'} alt="ZUNON terminal logo" width="1280" height="1280" fetchPriority="high"/></div><div className="hero-terminal" aria-label="Product availability"><span>ZUNON://SYSTEM_STATUS</span><p><b>[AVAILABLE]</b> Signed Agent identities</p><p><b>[AVAILABLE]</b> Export & share profiles</p><p><em>[BUILDING]</em> Signed community board</p><p><em>[PLANNED]</em> Solana activity registry</p><footer>01 WALLET → 02 PROFILE → 03 SIGNATURE</footer></div></div>
   </section>
   <OfficialInfo/>
@@ -70,7 +70,7 @@ export default function App(){
    <form className="prompt" onSubmit={run}><label htmlFor="terminal-command">C:&#92;ZUNON&gt;</label><input id="terminal-command" value={command} onChange={e=>setCommand(e.target.value)} autoComplete="off" spellCheck="false" placeholder="Type HELP"/><span>_</span></form>
    <div className="output-line" aria-live="polite">{output.map((line,i)=><span key={i}>{line}</span>)}</div>
    <div className="fkeys"><button onClick={()=>go('market')}><i>F1</i>Project</button><button onClick={()=>setOverlay('launch')}><i>F2</i>Token</button><button onClick={()=>go('access')}><i>F3</i>Identity</button><button onClick={()=>go('rules')}><i>F4</i>Notes</button><button onClick={()=>go('forum')}><i>F5</i>BBS</button><button onClick={()=>go('official')}><i>F6</i>Official</button><button onClick={()=>setMono(v=>!v)}><i>F8</i>Display</button></div>
-   <div className="statusline"><span>SOLANA</span><span>CA: {caLabel}</span><span>IDENTITY AVAILABLE</span><b>ZUNON / BUILD IN PUBLIC</b></div>
+   <div className="statusline"><span>SOLANA</span><span>CA: {caShort}</span><span>IDENTITY AVAILABLE</span><b>ZUNON / BUILD IN PUBLIC</b></div>
   </footer>
   {overlay&&<div className="modal-backdrop" onClick={e=>{if(e.target===e.currentTarget)setOverlay('')}}><RealDialog type={overlay} close={()=>setOverlay('')}/></div>}
  </div></div>

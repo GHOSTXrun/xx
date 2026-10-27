@@ -83,7 +83,7 @@ for(const width of [375,390,768,1440]){
   await expect(page.getByLabel('AGENT NAME',{exact:true})).toBeInViewport()
   await page.getByRole('button',{name:'Import & verify JSON'}).scrollIntoViewIfNeeded()
   await expect(page.getByRole('button',{name:'Import & verify JSON'})).toBeVisible()
-  await page.getByRole('button',{name:'TOKEN / CA: TBA',exact:true}).click()
+  await page.getByRole('button',{name:/TOKEN \/ CA:/}).click()
   await expect(page.getByRole('dialog')).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)
@@ -99,4 +99,17 @@ test('Backpack connects and signs; only the two approved wallets are shown',asyn
  await fill(page,'Backpack')
  await page.getByRole('button',{name:'Sign & verify identity'}).click()
  await expect(page.locator('.agent-card')).toContainText('SIGNATURE VERIFIED')
+})
+
+test('official CA, copy button and token links use the complete address',async({page,context})=>{
+ await context.grantPermissions(['clipboard-read','clipboard-write'])
+ await page.goto('/xx/')
+ const ca='DmsbYxTywtgnGfSFB84WHsgSjzeP86RJXe8Cm8Gdpump'
+ await expect(page.locator('.official-ca strong')).toHaveText(ca)
+ await expect(page.locator('.official-links').getByRole('link',{name:/Pump.fun/})).toHaveAttribute('href','https://pump.fun/coin/'+ca)
+ await expect(page.locator('.official-links').getByRole('link',{name:/Solscan/})).toHaveAttribute('href','https://solscan.io/token/'+ca)
+ await page.getByRole('button',{name:'Copy address',exact:true}).click()
+ await expect(page.locator('.official-section')).toContainText('CA copied.')
+ expect(await page.evaluate(()=>navigator.clipboard.readText())).toBe(ca)
+ await expect(page.locator('.launch-hero')).not.toContainText('TBA')
 })

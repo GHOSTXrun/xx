@@ -134,3 +134,13 @@ button.primary-action{background:#39ff68;color:#001605;font-weight:700}
 .identity-section .wallet-choice.connected{border-color:#39ff68}
 .terminal-os .menu-bar a{color:#9affb6}
 @media(max-width:700px){.terminal-os .menu-bar a{justify-content:center;min-height:44px;height:auto;padding:10px 4px;border:1px solid #205832;font-size:9px;grid-column:1/-1}.wallet-picker{gap:8px}.identity-section .wallet-choice{padding:12px 8px;gap:7px}.wallet-choice span{font-size:11px}.wallet-choice small{font-size:7px}}
+
+/* Preserve complete CA readability without stretching the terminal layout. */
+.official-ca{grid-template-columns:minmax(0,1fr);min-width:0}
+.official-ca strong{grid-column:1;grid-row:auto;font-size:15px;line-height:1.7;overflow-wrap:anywhere;word-break:break-all;user-select:all}
+.official-ca button{justify-self:start}
+.official-links{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.verified-inspect dd,.chain-readout b,.real-rules-panel p{overflow-wrap:anywhere;min-width:0}
+.zunon-token-ca strong{overflow-wrap:anywhere;word-break:break-all;user-select:all}
+.dialog h3{overflow-wrap:anywhere}.dialog a{color:#9affb6}
+@media(max-width:700px){.official-ca strong{font-size:13px}.official-links{grid-template-columns:1fr 1fr}}
